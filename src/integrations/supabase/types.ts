@@ -14,7 +14,84 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      estimates: {
+        Row: {
+          created_at: string
+          customer_name: string | null
+          customer_phone: string | null
+          electrician_name: string | null
+          gst_amount: number
+          gst_enabled: boolean
+          gst_rate: number
+          id: string
+          invoice_number: string
+          item_count: number
+          items: Json
+          subtotal: number
+          total: number
+        }
+        Insert: {
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          electrician_name?: string | null
+          gst_amount?: number
+          gst_enabled?: boolean
+          gst_rate?: number
+          id?: string
+          invoice_number: string
+          item_count?: number
+          items?: Json
+          subtotal?: number
+          total?: number
+        }
+        Update: {
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          electrician_name?: string | null
+          gst_amount?: number
+          gst_enabled?: boolean
+          gst_rate?: number
+          id?: string
+          invoice_number?: string
+          item_count?: number
+          items?: Json
+          subtotal?: number
+          total?: number
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          name: string
+          price: number
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          name: string
+          price?: number
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          name?: string
+          price?: number
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
