@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CreateEstimateRouteImport } from './routes/create-estimate'
 import { Route as ProductsRouteImport } from './routes/products'
+import { Route as SavedEstimatesRouteImport } from './routes/saved-estimates'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +29,44 @@ const ProductsRoute = ProductsRouteImport.update({
   path: '/products',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SavedEstimatesRoute = SavedEstimatesRouteImport.update({
+  id: '/saved-estimates',
+  path: '/saved-estimates',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/create-estimate': typeof CreateEstimateRoute
   '/products': typeof ProductsRoute
+  '/saved-estimates': typeof SavedEstimatesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/create-estimate': typeof CreateEstimateRoute
   '/products': typeof ProductsRoute
+  '/saved-estimates': typeof SavedEstimatesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/create-estimate': typeof CreateEstimateRoute
   '/products': typeof ProductsRoute
+  '/saved-estimates': typeof SavedEstimatesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/create-estimate' | '/products'
+  fullPaths: '/' | '/create-estimate' | '/products' | '/saved-estimates'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/create-estimate' | '/products'
-  id: '__root__' | '/' | '/create-estimate' | '/products'
+  to: '/' | '/create-estimate' | '/products' | '/saved-estimates'
+  id: '__root__' | '/' | '/create-estimate' | '/products' | '/saved-estimates'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CreateEstimateRoute: typeof CreateEstimateRoute
   ProductsRoute: typeof ProductsRoute
+  SavedEstimatesRoute: typeof SavedEstimatesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +92,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/saved-estimates': {
+      id: '/saved-estimates'
+      path: '/saved-estimates'
+      fullPath: '/saved-estimates'
+      preLoaderRoute: typeof SavedEstimatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CreateEstimateRoute: CreateEstimateRoute,
   ProductsRoute: ProductsRoute,
+  SavedEstimatesRoute: SavedEstimatesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
