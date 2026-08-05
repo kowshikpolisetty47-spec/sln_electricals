@@ -1,16 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Boxes,
-  FileText,
-  IndianRupee,
-  Lightbulb,
-  Plus,
-  Printer,
-  Save,
-  Settings2,
-  Wrench,
-} from "lucide-react";
+import { Boxes, FileText, Lightbulb, Settings2, Wrench } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -34,29 +24,6 @@ export const Route = createFileRoute("/")({
   }),
   component: Index,
 });
-
-const FEATURES = [
-  {
-    icon: Plus,
-    title: "Dynamic invoice rows",
-    text: "Add items line by line with searchable product names and auto-filled prices.",
-  },
-  {
-    icon: IndianRupee,
-    title: "Instant totals",
-    text: "Quantity × rate, item count, optional GST and final total update as you type.",
-  },
-  {
-    icon: Printer,
-    title: "Print & PDF",
-    text: "Hand over a clean invoice-style estimate or save it as a PDF for WhatsApp.",
-  },
-  {
-    icon: Save,
-    title: "Saved estimates",
-    text: "Every quotation is stored with its invoice number, customer and electrician.",
-  },
-];
 
 function Index() {
   const products = useQuery({ queryKey: ["products"], queryFn: fetchProducts });
@@ -135,22 +102,7 @@ function Index() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-        <h2 className="text-xl font-bold text-brand-dark sm:text-2xl">Everything at the counter</h2>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {FEATURES.map((feature) => (
-            <Card key={feature.title} className="h-full border-border p-5 shadow-card">
-              <span className="grid h-10 w-10 place-items-center rounded-xl bg-brand-soft text-brand">
-                <feature.icon className="h-5 w-5" />
-              </span>
-              <h3 className="mt-4 text-base font-bold text-foreground">{feature.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{feature.text}</p>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6">
+      <section className="mx-auto max-w-7xl px-4 py-12 pb-16 sm:px-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-xl font-bold text-brand-dark sm:text-2xl">Recent estimates</h2>
           <Button asChild variant="ghost" size="sm">
