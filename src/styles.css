@@ -183,6 +183,9 @@
 
   body {
     background: #fff;
+    width: 100% !important;
+    font-size: 10pt !important;
+    zoom: 0.72;
   }
 
   .print-sheet {
@@ -191,9 +194,39 @@
     margin: 0 !important;
     padding: 0 !important;
     max-width: 100% !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .print-sheet table {
+    min-width: 0 !important;
+    width: 100% !important;
+    table-layout: auto !important;
+    font-size: 9.5pt !important;
+  }
+
+  .print-sheet .overflow-x-auto,
+  .print-sheet .overflow-auto {
+    overflow: visible !important;
+  }
+
+  .print-sheet input,
+  .print-sheet select {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    height: auto !important;
+    box-shadow: none !important;
+    font-size: 9.5pt !important;
+  }
+
+  .print-sheet tr,
+  .print-sheet table {
+    page-break-inside: avoid;
   }
 
   @page {
-    margin: 14mm;
+    size: A4 portrait;
+    margin: 10mm;
   }
 }
