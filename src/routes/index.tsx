@@ -1,16 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Boxes,
-  FileText,
-  IndianRupee,
-  Lightbulb,
-  Plus,
-  Printer,
-  Save,
-  Settings2,
-  Wrench,
-} from "lucide-react";
+import { Boxes, FileText, Lightbulb, Settings2, Wrench } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
