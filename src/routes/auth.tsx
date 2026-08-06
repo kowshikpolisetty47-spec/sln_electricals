@@ -8,7 +8,6 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -122,14 +121,6 @@ function AuthPage() {
         </form>
 
         <div className="mt-4 grid gap-3">
-          <Button
-            variant="outline"
-            onClick={() =>
-              lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/auth" })
-            }
-          >
-            Continue with Google
-          </Button>
           <button
             type="button"
             className="text-xs font-semibold text-brand-dark underline"
