@@ -156,7 +156,23 @@ function CreateEstimate() {
               <p className="text-xs font-bold tracking-wide text-muted-foreground uppercase">
                 Estimate / Quotation
               </p>
-              <p className="font-mono text-sm font-bold text-brand-dark">{invoiceNumber}</p>
+              <p className="hidden font-mono text-sm font-bold text-brand-dark print:block">
+                {invoiceNumber}
+              </p>
+              <div className="no-print mt-1 grid gap-1 sm:justify-items-end">
+                <Label htmlFor="invoice-number" className="text-xs">
+                  Estimate number
+                </Label>
+                <Input
+                  id="invoice-number"
+                  value={invoiceNumber}
+                  maxLength={40}
+                  onChange={(event) => setInvoiceNumber(event.target.value)}
+                  placeholder="EST-0001"
+                  className="bg-card font-mono sm:w-48 sm:text-right"
+                  aria-label="Estimate number"
+                />
+              </div>
               <p className="text-xs text-muted-foreground">Date: {formatDate(new Date())}</p>
             </div>
           </div>
