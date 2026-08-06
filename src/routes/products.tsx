@@ -13,13 +13,13 @@ import { fetchProducts, formatINR } from "@/lib/billing";
 export const Route = createFileRoute("/products")({
   head: () => ({
     meta: [
-      { title: "Product Catalogue — Shakti Electricals & Plumbing" },
+      { title: "Product Catalogue — SLN Electricals" },
       {
         name: "description",
         content:
           "Search live prices for wires, switches, pipes, fittings, lights, fans and plumbing accessories.",
       },
-      { property: "og:title", content: "Product Catalogue — Shakti Electricals & Plumbing" },
+      { property: "og:title", content: "Product Catalogue — SLN Electricals" },
       {
         property: "og:description",
         content: "Browse shop material prices by category with instant search.",

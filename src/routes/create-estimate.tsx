@@ -25,13 +25,13 @@ import {
 export const Route = createFileRoute("/create-estimate")({
   head: () => ({
     meta: [
-      { title: "Create Estimate — Shakti Electricals & Plumbing" },
+      { title: "Create Estimate — SLN Electricals" },
       {
         name: "description",
         content:
           "Build a customer quotation line by line with searchable products, live totals, GST and print or PDF output.",
       },
-      { property: "og:title", content: "Create Estimate — Shakti Electricals & Plumbing" },
+      { property: "og:title", content: "Create Estimate — SLN Electricals" },
       {
         property: "og:description",
         content: "Dynamic invoice table with auto-filled prices and instant grand total.",
@@ -146,7 +146,7 @@ function CreateEstimate() {
           <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
             <div className="min-w-0">
               <h2 className="text-lg font-extrabold text-brand-dark sm:text-xl">
-                Shakti Electricals &amp; Plumbing
+                SLN Electricals
               </h2>
               <p className="text-xs text-muted-foreground">
                 Electrical &amp; Plumbing Materials · Wholesale &amp; Retail
@@ -156,7 +156,23 @@ function CreateEstimate() {
               <p className="text-xs font-bold tracking-wide text-muted-foreground uppercase">
                 Estimate / Quotation
               </p>
-              <p className="font-mono text-sm font-bold text-brand-dark">{invoiceNumber}</p>
+              <p className="hidden font-mono text-sm font-bold text-brand-dark print:block">
+                {invoiceNumber}
+              </p>
+              <div className="no-print mt-1 grid gap-1 sm:justify-items-end">
+                <Label htmlFor="invoice-number" className="text-xs">
+                  Estimate number
+                </Label>
+                <Input
+                  id="invoice-number"
+                  value={invoiceNumber}
+                  maxLength={40}
+                  onChange={(event) => setInvoiceNumber(event.target.value)}
+                  placeholder="EST-0001"
+                  className="bg-card font-mono sm:w-48 sm:text-right"
+                  aria-label="Estimate number"
+                />
+              </div>
               <p className="text-xs text-muted-foreground">Date: {formatDate(new Date())}</p>
             </div>
           </div>

@@ -20,16 +20,16 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { CATEGORIES, UNITS, fetchProducts, formatINR, type Product } from "@/lib/billing";
 
-export const Route = createFileRoute("/admin")({
+export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
-      { title: "Admin Panel — Shakti Electricals & Plumbing" },
+      { title: "Admin Panel — SLN Electricals" },
       {
         name: "description",
         content:
           "Shop owner dashboard to add products, update prices, delete items and organise the catalogue by category.",
       },
-      { property: "og:title", content: "Admin Panel — Shakti Electricals & Plumbing" },
+      { property: "og:title", content: "Admin Panel — SLN Electricals" },
       {
         property: "og:description",
         content: "Manage the material catalogue so estimate prices stay up to date.",
