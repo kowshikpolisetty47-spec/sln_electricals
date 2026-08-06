@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { PackagePlus, Pencil, Search, Trash2, X } from "lucide-react";
+import { LogOut, PackagePlus, Pencil, Search, Trash2, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -52,6 +52,7 @@ const EMPTY: FormState = { name: "", category: CATEGORIES[0], unit: UNITS[0], pr
 
 function Admin() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { data: products = [] } = useQuery({ queryKey: ["products"], queryFn: fetchProducts });
 
   const [form, setForm] = useState<FormState>(EMPTY);
@@ -117,10 +118,26 @@ function Admin() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <h1 className="text-2xl font-extrabold text-brand-dark sm:text-3xl">Admin Panel</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Add products and update prices — estimates always use these rates.
-      </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-extrabold text-brand-dark sm:text-3xl">Admin Panel</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Add products and update prices — estimates always use these rates.
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={async () => {
+            await queryClient.cancelQueries();
+            queryClient.clear();
+            await supabase.auth.signOut();
+            navigate({ to: "/auth", replace: true });
+          }}
+        >
+          <LogOut className="h-4 w-4" /> Sign out
+        </Button>
+      </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[22rem_minmax(0,1fr)] lg:items-start">
         <Card className="border-border p-5 shadow-card lg:sticky lg:top-24">
