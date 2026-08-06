@@ -10,19 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as CreateEstimateRouteImport } from './routes/create-estimate'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as SavedEstimatesRouteImport } from './routes/saved-estimates'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CreateEstimateRoute = CreateEstimateRouteImport.update({
@@ -40,50 +35,55 @@ const SavedEstimatesRoute = SavedEstimatesRouteImport.update({
   path: '/saved-estimates',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/_authenticated/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/create-estimate': typeof CreateEstimateRoute
   '/products': typeof ProductsRoute
   '/saved-estimates': typeof SavedEstimatesRoute
+  '/admin': typeof AuthenticatedAdminRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/create-estimate': typeof CreateEstimateRoute
   '/products': typeof ProductsRoute
   '/saved-estimates': typeof SavedEstimatesRoute
+  '/admin': typeof AuthenticatedAdminRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/create-estimate': typeof CreateEstimateRoute
   '/products': typeof ProductsRoute
   '/saved-estimates': typeof SavedEstimatesRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/admin' | '/create-estimate' | '/products' | '/saved-estimates'
+    '/' | '/create-estimate' | '/products' | '/saved-estimates' | '/admin'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/create-estimate' | '/products' | '/saved-estimates'
+  to: '/' | '/create-estimate' | '/products' | '/saved-estimates' | '/admin'
   id:
     | '__root__'
     | '/'
-    | '/admin'
     | '/create-estimate'
     | '/products'
     | '/saved-estimates'
+    | '/_authenticated/admin'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
   CreateEstimateRoute: typeof CreateEstimateRoute
   ProductsRoute: typeof ProductsRoute
   SavedEstimatesRoute: typeof SavedEstimatesRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -93,13 +93,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/create-estimate': {
@@ -123,15 +116,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SavedEstimatesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRoute,
   CreateEstimateRoute: CreateEstimateRoute,
   ProductsRoute: ProductsRoute,
   SavedEstimatesRoute: SavedEstimatesRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
