@@ -10,6 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CreateEstimateRouteImport } from './routes/create-estimate'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as SavedEstimatesRouteImport } from './routes/saved-estimates'
@@ -18,6 +20,15 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CreateEstimateRoute = CreateEstimateRouteImport.update({
@@ -36,13 +47,14 @@ const SavedEstimatesRoute = SavedEstimatesRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/_authenticated/admin',
+  id: '/admin',
   path: '/admin',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/create-estimate': typeof CreateEstimateRoute
   '/products': typeof ProductsRoute
   '/saved-estimates': typeof SavedEstimatesRoute
@@ -50,6 +62,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/create-estimate': typeof CreateEstimateRoute
   '/products': typeof ProductsRoute
   '/saved-estimates': typeof SavedEstimatesRoute
@@ -58,6 +71,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
   '/create-estimate': typeof CreateEstimateRoute
   '/products': typeof ProductsRoute
   '/saved-estimates': typeof SavedEstimatesRoute
@@ -66,12 +81,25 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/create-estimate' | '/products' | '/saved-estimates' | '/admin'
+    | '/'
+    | '/auth'
+    | '/create-estimate'
+    | '/products'
+    | '/saved-estimates'
+    | '/admin'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/create-estimate' | '/products' | '/saved-estimates' | '/admin'
+  to:
+    | '/'
+    | '/auth'
+    | '/create-estimate'
+    | '/products'
+    | '/saved-estimates'
+    | '/admin'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
+    | '/auth'
     | '/create-estimate'
     | '/products'
     | '/saved-estimates'
@@ -80,10 +108,11 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
   CreateEstimateRoute: typeof CreateEstimateRoute
   ProductsRoute: typeof ProductsRoute
   SavedEstimatesRoute: typeof SavedEstimatesRoute
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -93,6 +122,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/create-estimate': {
@@ -121,28 +164,30 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
   CreateEstimateRoute: CreateEstimateRoute,
   ProductsRoute: ProductsRoute,
   SavedEstimatesRoute: SavedEstimatesRoute,
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
