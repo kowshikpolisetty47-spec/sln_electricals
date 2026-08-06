@@ -10,6 +10,9 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    denied: search.denied === true || search.denied === "true" ? true : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Admin Login — SLN Electricals" },
