@@ -10,6 +10,9 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    denied: search['denied'] === true || search['denied'] === "true" ? true : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Admin Login — SLN Electricals" },
@@ -32,22 +35,42 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { denied } = Route.useSearch();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
+    let active = true;
+
+    async function routeIfOwner(userId: string) {
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("role", "owner")
+        .maybeSingle();
+      if (!active) return;
+      if (data) {
+        navigate({ to: "/admin", replace: true });
+      } else {
+        await supabase.auth.signOut();
+        toast.error("This account is not a shop owner. Admin access is owner-only.");
+      }
+    }
+
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/admin", replace: true });
+      if (data.session && !denied) void routeIfOwner(data.session.user.id);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session && (event === "SIGNED_IN" || event === "INITIAL_SESSION")) {
-        navigate({ to: "/admin", replace: true });
-      }
+      if (session && event === "SIGNED_IN") void routeIfOwner(session.user.id);
     });
-    return () => sub.subscription.unsubscribe();
-  }, [navigate]);
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
+  }, [navigate, denied]);
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -87,6 +110,12 @@ function AuthPage() {
             </p>
           </div>
         </div>
+
+        {denied ? (
+          <p className="mt-4 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs font-semibold text-destructive">
+            That account does not have owner access. Sign in with the shop owner account.
+          </p>
+        ) : null}
 
         <form className="mt-6 grid gap-4" onSubmit={submit}>
           <div className="grid gap-1.5">
