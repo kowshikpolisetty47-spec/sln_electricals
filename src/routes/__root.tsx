@@ -79,13 +79,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Shakti Electricals & Plumbing — Billing" },
+      { title: "SLN Electricals — Billing" },
       {
         name: "description",
         content:
           "Estimation and billing software for electrical and plumbing wholesale material stores.",
       },
-      { property: "og:title", content: "Shakti Electricals & Plumbing — Billing" },
+      { property: "og:title", content: "SLN Electricals — Billing" },
       {
         property: "og:description",
         content: "Prepare customer estimates in minutes with live material prices.",

@@ -25,13 +25,13 @@ import {
 export const Route = createFileRoute("/create-estimate")({
   head: () => ({
     meta: [
-      { title: "Create Estimate — Shakti Electricals & Plumbing" },
+      { title: "Create Estimate — SLN Electricals" },
       {
         name: "description",
         content:
           "Build a customer quotation line by line with searchable products, live totals, GST and print or PDF output.",
       },
-      { property: "og:title", content: "Create Estimate — Shakti Electricals & Plumbing" },
+      { property: "og:title", content: "Create Estimate — SLN Electricals" },
       {
         property: "og:description",
         content: "Dynamic invoice table with auto-filled prices and instant grand total.",
@@ -146,7 +146,7 @@ function CreateEstimate() {
           <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
             <div className="min-w-0">
               <h2 className="text-lg font-extrabold text-brand-dark sm:text-xl">
-                Shakti Electricals &amp; Plumbing
+                SLN Electricals
               </h2>
               <p className="text-xs text-muted-foreground">
                 Electrical &amp; Plumbing Materials · Wholesale &amp; Retail

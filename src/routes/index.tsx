@@ -9,13 +9,13 @@ import { fetchEstimates, fetchProducts, formatDate, formatINR } from "@/lib/bill
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Shakti Electricals & Plumbing — Estimate Billing" },
+      { title: "SLN Electricals — Estimate Billing" },
       {
         name: "description",
         content:
           "Create customer estimates for wires, switches, pipes, fittings, lights and fans in minutes with live shop prices.",
       },
-      { property: "og:title", content: "Shakti Electricals & Plumbing — Estimate Billing" },
+      { property: "og:title", content: "SLN Electricals — Estimate Billing" },
       {
         property: "og:description",
         content: "Billing software for electrical and plumbing wholesale material stores.",

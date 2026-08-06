@@ -22,7 +22,7 @@ export function StoreHeader() {
           </span>
           <span className="min-w-0">
             <span className="block truncate font-display text-base font-extrabold text-brand-dark sm:text-lg">
-              Shakti Electricals &amp; Plumbing
+              SLN Electricals
             </span>
             <span className="flex items-center gap-1 text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
               <Wrench className="h-3 w-3" /> Wholesale Materials Store

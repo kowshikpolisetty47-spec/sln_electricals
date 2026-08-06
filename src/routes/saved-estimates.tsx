@@ -16,13 +16,13 @@ import { fetchEstimates, formatDate, formatINR, type SavedEstimate } from "@/lib
 export const Route = createFileRoute("/saved-estimates")({
   head: () => ({
     meta: [
-      { title: "Saved Estimates — Shakti Electricals & Plumbing" },
+      { title: "Saved Estimates — SLN Electricals" },
       {
         name: "description",
         content:
           "Look up past quotations by invoice number, customer or electrician and reprint them anytime.",
       },
-      { property: "og:title", content: "Saved Estimates — Shakti Electricals & Plumbing" },
+      { property: "og:title", content: "Saved Estimates — SLN Electricals" },
       {
         property: "og:description",
         content: "All shop quotations stored with totals, GST and line items.",
@@ -164,7 +164,7 @@ function EstimateSheet({ estimate, onBack }: { estimate: SavedEstimate; onBack: 
         <div className="grid gap-3 border-b border-border bg-brand-soft/60 px-6 py-5 sm:grid-cols-[minmax(0,1fr)_auto]">
           <div className="min-w-0">
             <h1 className="text-lg font-extrabold text-brand-dark sm:text-xl">
-              Shakti Electricals &amp; Plumbing
+              SLN Electricals
             </h1>
             <p className="text-xs text-muted-foreground">
               Electrical &amp; Plumbing Materials · Wholesale &amp; Retail
