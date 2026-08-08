@@ -1,4 +1,4 @@
-import { auth, defineMcp, type AnyToolDefinition } from "@lovable.dev/mcp-js";
+import { auth, defineMcp, type ToolDefinition } from "@lovable.dev/mcp-js";
 import searchProductsTool from "./tools/search-products";
 import listEstimatesTool from "./tools/list-estimates";
 import createEstimateTool from "./tools/create-estimate";
@@ -15,5 +15,5 @@ export default defineMcp({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated",
   }),
-  tools: [searchProductsTool, listEstimatesTool, createEstimateTool] as AnyToolDefinition[],
+  tools: [searchProductsTool, listEstimatesTool, createEstimateTool] as unknown as ToolDefinition[],
 });
