@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { ensureAdminAccounts, loginIdToEmail } from "@/lib/admin-accounts.functions";
 
 export const Route = createFileRoute("/auth")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -36,8 +37,7 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const navigate = useNavigate();
   const { denied } = Route.useSearch();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
-  const [email, setEmail] = useState("");
+  const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -76,19 +76,12 @@ function AuthPage() {
     event.preventDefault();
     setBusy(true);
     try {
-      if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: window.location.origin + "/auth" },
-        });
-        if (error) throw error;
-        toast.success("Check your email to confirm the account, then sign in.");
-        setMode("signin");
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-      }
+      await ensureAdminAccounts();
+      const { error } = await supabase.auth.signInWithPassword({
+        email: loginIdToEmail(loginId),
+        password,
+      });
+      if (error) throw new Error("Invalid login ID or password.");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Something went wrong");
     } finally {
@@ -119,15 +112,17 @@ function AuthPage() {
 
         <form className="mt-6 grid gap-4" onSubmit={submit}>
           <div className="grid gap-1.5">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="loginId">Login ID</Label>
             <Input
-              id="email"
-              type="email"
-              autoComplete="email"
+              id="loginId"
+              type="text"
+              autoComplete="username"
+              autoCapitalize="none"
+              spellCheck={false}
               required
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="owner@example.com"
+              value={loginId}
+              onChange={(event) => setLoginId(event.target.value)}
+              placeholder="slnadmin"
             />
           </div>
           <div className="grid gap-1.5">
@@ -135,7 +130,7 @@ function AuthPage() {
             <Input
               id="password"
               type="password"
-              autoComplete={mode === "signup" ? "new-password" : "current-password"}
+              autoComplete="current-password"
               required
               minLength={6}
               value={password}
@@ -145,19 +140,16 @@ function AuthPage() {
           </div>
           <Button type="submit" disabled={busy}>
             <LogIn className="h-4 w-4" />
-            {mode === "signup" ? "Create admin account" : "Sign in"}
+            Sign in
           </Button>
         </form>
 
-        <div className="mt-4 grid gap-3">
-          <button
-            type="button"
-            className="text-xs font-semibold text-brand-dark underline"
-            onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-          >
-            {mode === "signin" ? "Need an account? Sign up" : "Already have an account? Sign in"}
-          </button>
-        </div>
+        <p className="mt-5 rounded-lg border border-border bg-muted/60 p-3 text-xs text-muted-foreground">
+          Only two login IDs can access the admin panel:{" "}
+          <span className="font-semibold text-brand-dark">slnadmin</span> and{" "}
+          <span className="font-semibold text-brand-dark">slnowner</span>. New accounts cannot be
+          created from this page.
+        </p>
       </Card>
     </div>
   );
