@@ -171,8 +171,8 @@
 
 @utility invoice-grid {
   background-image:
-    linear-gradient(oklch(0.52 0.19 258 / 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, oklch(0.52 0.19 258 / 0.05) 1px, transparent 1px);
+    linear-gradient(oklch(0.42 0.11 250 / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(0.42 0.11 250 / 0.05) 1px, transparent 1px);
   background-size: 28px 28px;
 }
 
