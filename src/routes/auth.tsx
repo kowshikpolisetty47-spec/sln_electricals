@@ -13,6 +13,10 @@ import { ensureAdminAccounts, loginIdToEmail } from "@/lib/admin-accounts.functi
 export const Route = createFileRoute("/auth")({
   validateSearch: (search: Record<string, unknown>) => ({
     denied: search['denied'] === true || search['denied'] === "true" ? true : undefined,
+    next:
+      typeof search['next'] === "string" && search['next'].startsWith("/") && !search['next'].startsWith("//")
+        ? search['next']
+        : undefined,
   }),
   head: () => ({
     meta: [
@@ -36,7 +40,7 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
-  const { denied } = Route.useSearch();
+  const { denied, next } = Route.useSearch();
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -45,6 +49,10 @@ function AuthPage() {
     let active = true;
 
     async function routeIfOwner(userId: string) {
+      if (next) {
+        window.location.href = next;
+        return;
+      }
       const { data } = await supabase
         .from("user_roles")
         .select("role")
@@ -70,7 +78,7 @@ function AuthPage() {
       active = false;
       sub.subscription.unsubscribe();
     };
-  }, [navigate, denied]);
+  }, [navigate, denied, next]);
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
