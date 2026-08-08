@@ -132,7 +132,7 @@ function Admin() {
             await queryClient.cancelQueries();
             queryClient.clear();
             await supabase.auth.signOut();
-            navigate({ to: "/auth", replace: true });
+            navigate({ to: "/auth", search: {}, replace: true });
           }}
         >
           <LogOut className="h-4 w-4" /> Sign out
