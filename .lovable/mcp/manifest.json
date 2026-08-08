@@ -1,0 +1,156 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.1",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://hqbyeomgmfxfcpgvegal.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "sln-electricals",
+      "version": "0.1.0",
+      "title": "SLN Electricals"
+    },
+    "tools": [
+      {
+        "name": "search_products",
+        "title": "Search products",
+        "description": "Search the SLN Electricals catalogue by product name or category and return name, category, unit and price.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "query": {
+              "default": "",
+              "description": "Text to match in the product name.",
+              "type": "string"
+            },
+            "category": {
+              "description": "Optional exact category filter, e.g. Wires.",
+              "type": "string"
+            },
+            "limit": {
+              "default": 25,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_estimates",
+        "title": "List saved estimates",
+        "description": "List recently saved estimates with invoice number, customer, item count and totals. Pass an invoice number to fetch one estimate with its line items.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "invoice_number": {
+              "description": "Exact invoice number of a single estimate.",
+              "type": "string"
+            },
+            "limit": {
+              "default": 10,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_estimate",
+        "title": "Create an estimate",
+        "description": "Save a new estimate for a customer. Totals and GST are calculated from the line items you provide.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "invoice_number": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Estimate / invoice number, e.g. EST-260808-1024."
+            },
+            "customer_name": {
+              "type": "string"
+            },
+            "customer_phone": {
+              "type": "string"
+            },
+            "electrician_name": {
+              "type": "string"
+            },
+            "gst_enabled": {
+              "default": false,
+              "type": "boolean"
+            },
+            "gst_rate": {
+              "default": 18,
+              "type": "number",
+              "minimum": 0,
+              "maximum": 50
+            },
+            "items": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "unit": {
+                    "default": "Piece",
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "price": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Price per unit in rupees."
+                  }
+                },
+                "required": [
+                  "name",
+                  "quantity",
+                  "price"
+                ]
+              }
+            }
+          },
+          "required": [
+            "invoice_number",
+            "items"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
