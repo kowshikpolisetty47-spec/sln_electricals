@@ -130,7 +130,7 @@ function AuthPage() {
               required
               value={loginId}
               onChange={(event) => setLoginId(event.target.value)}
-              placeholder="slnadmin"
+              placeholder="9866807648"
             />
           </div>
           <div className="grid gap-1.5">
@@ -153,10 +153,9 @@ function AuthPage() {
         </form>
 
         <p className="mt-5 rounded-lg border border-border bg-muted/60 p-3 text-xs text-muted-foreground">
-          Only two login IDs can access the admin panel:{" "}
-          <span className="font-semibold text-brand-dark">slnadmin</span> and{" "}
-          <span className="font-semibold text-brand-dark">slnowner</span>. New accounts cannot be
-          created from this page.
+          Only the shop owner login ID{" "}
+          <span className="font-semibold text-brand-dark">9866807648</span> can access the admin
+          panel. New accounts cannot be created from this page.
         </p>
       </Card>
     </div>
