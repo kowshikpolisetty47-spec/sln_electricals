@@ -19,7 +19,11 @@ export type Database = {
           created_at: string
           customer_name: string | null
           customer_phone: string | null
+          discount_amount: number
+          discount_type: string
+          discount_value: number
           electrician_name: string | null
+          estimate_time: string | null
           gst_amount: number
           gst_enabled: boolean
           gst_rate: number
@@ -34,7 +38,11 @@ export type Database = {
           created_at?: string
           customer_name?: string | null
           customer_phone?: string | null
+          discount_amount?: number
+          discount_type?: string
+          discount_value?: number
           electrician_name?: string | null
+          estimate_time?: string | null
           gst_amount?: number
           gst_enabled?: boolean
           gst_rate?: number
@@ -49,7 +57,11 @@ export type Database = {
           created_at?: string
           customer_name?: string | null
           customer_phone?: string | null
+          discount_amount?: number
+          discount_type?: string
+          discount_value?: number
           electrician_name?: string | null
+          estimate_time?: string | null
           gst_amount?: number
           gst_enabled?: boolean
           gst_rate?: number
