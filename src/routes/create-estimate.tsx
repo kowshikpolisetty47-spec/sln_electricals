@@ -14,11 +14,13 @@ import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import {
   computeTotals,
+  currentTimeValue,
   fetchProducts,
   formatDate,
   formatINR,
   newInvoiceNumber,
   newRowKey,
+  type DiscountType,
   type EstimateItem,
 } from "@/lib/billing";
 
@@ -55,11 +57,14 @@ function CreateEstimate() {
   const [electricianName, setElectricianName] = useState("");
   const [gstEnabled, setGstEnabled] = useState(false);
   const [gstRate, setGstRate] = useState(18);
+  const [estimateTime, setEstimateTime] = useState(currentTimeValue);
+  const [discountType, setDiscountType] = useState<DiscountType>("none");
+  const [discountValue, setDiscountValue] = useState(0);
   const [items, setItems] = useState<EstimateItem[]>([emptyRow()]);
 
   const totals = useMemo(
-    () => computeTotals(items, gstEnabled, gstRate),
-    [items, gstEnabled, gstRate],
+    () => computeTotals(items, gstEnabled, gstRate, discountType, discountValue),
+    [items, gstEnabled, gstRate, discountType, discountValue],
   );
 
   function updateRow(key: string, patch: Partial<EstimateItem>) {
@@ -76,6 +81,9 @@ function CreateEstimate() {
     setCustomerPhone("");
     setElectricianName("");
     setGstEnabled(false);
+    setDiscountType("none");
+    setDiscountValue(0);
+    setEstimateTime(currentTimeValue());
     setInvoiceNumber(newInvoiceNumber());
   }
 
@@ -90,6 +98,10 @@ function CreateEstimate() {
         electrician_name: electricianName || null,
         gst_enabled: gstEnabled,
         gst_rate: gstRate,
+        estimate_time: estimateTime || null,
+        discount_type: discountType,
+        discount_value: discountValue,
+        discount_amount: totals.discountAmount,
         subtotal: totals.subtotal,
         gst_amount: totals.gstAmount,
         total: totals.total,
@@ -173,7 +185,21 @@ function CreateEstimate() {
                   aria-label="Estimate number"
                 />
               </div>
-              <p className="text-xs text-muted-foreground">Date: {formatDate(new Date())}</p>
+              <p className="text-xs text-muted-foreground">
+                Date: {formatDate(new Date())} · Time: {estimateTime || "—"}
+              </p>
+              <div className="no-print mt-1 grid gap-1 sm:justify-items-end">
+                <Label htmlFor="estimate-time" className="text-xs">
+                  Time
+                </Label>
+                <Input
+                  id="estimate-time"
+                  type="time"
+                  value={estimateTime}
+                  onChange={(event) => setEstimateTime(event.target.value)}
+                  className="bg-card sm:w-48"
+                />
+              </div>
             </div>
           </div>
 
@@ -328,6 +354,41 @@ function CreateEstimate() {
               />
               <span className="text-sm">%</span>
             </div>
+            <div className="no-print flex flex-wrap items-center gap-2 pt-1">
+              <Label className="text-sm">Discount</Label>
+              <div className="flex overflow-hidden rounded-lg border border-border">
+                {(
+                  [
+                    ["none", "None"],
+                    ["percent", "%"],
+                    ["amount", "₹"],
+                  ] as [DiscountType, string][]
+                ).map(([type, label]) => (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => setDiscountType(type)}
+                    className={`px-3 py-1.5 text-xs font-semibold transition-colors ${
+                      discountType === type
+                        ? "bg-brand text-brand-foreground"
+                        : "bg-card text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <Input
+                type="number"
+                min={0}
+                step="0.01"
+                value={discountValue}
+                onChange={(event) => setDiscountValue(Number(event.target.value) || 0)}
+                disabled={discountType === "none"}
+                aria-label="Discount value"
+                className="w-24 bg-card"
+              />
+            </div>
           </div>
 
           <div className="rounded-xl border border-border bg-card p-5 shadow-card">
@@ -340,6 +401,16 @@ function CreateEstimate() {
                 <dt className="text-muted-foreground">Grand total</dt>
                 <dd className="font-semibold">{formatINR(totals.subtotal)}</dd>
               </div>
+              {totals.discountAmount > 0 ? (
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">
+                    Discount{discountType === "percent" ? ` @ ${discountValue}%` : ""}
+                  </dt>
+                  <dd className="font-semibold text-destructive">
+                    − {formatINR(totals.discountAmount)}
+                  </dd>
+                </div>
+              ) : null}
               {gstEnabled ? (
                 <div className="flex justify-between">
                   <dt className="text-muted-foreground">GST @ {gstRate}%</dt>
