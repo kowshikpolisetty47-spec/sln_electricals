@@ -11,7 +11,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { ensureAdminAccounts, loginIdToEmail } from "@/lib/admin-accounts.functions";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { denied?: boolean | undefined; next?: string | undefined } => ({
     denied: search['denied'] === true || search['denied'] === "true" ? true : undefined,
     next:
       typeof search['next'] === "string" && search['next'].startsWith("/") && !search['next'].startsWith("//")
