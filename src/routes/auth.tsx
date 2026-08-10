@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { ensureAdminAccounts, loginIdToEmail } from "@/lib/admin-accounts.functions";
+import { loginIdToEmail } from "@/lib/admin-accounts";
 
 export const Route = createFileRoute("/auth")({
   validateSearch: (
@@ -86,7 +86,6 @@ function AuthPage() {
     event.preventDefault();
     setBusy(true);
     try {
-      await ensureAdminAccounts();
       const { error } = await supabase.auth.signInWithPassword({
         email: loginIdToEmail(loginId),
         password,
