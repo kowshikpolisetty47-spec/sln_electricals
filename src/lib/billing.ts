@@ -27,6 +27,10 @@ export type SavedEstimate = {
   gst_rate: number;
   subtotal: number;
   gst_amount: number;
+  discount_type: string;
+  discount_value: number;
+  discount_amount: number;
+  estimate_time: string | null;
   total: number;
   item_count: number;
   items: EstimateItem[];
@@ -62,6 +66,20 @@ export function formatDate(iso: string | Date): string {
     month: "short",
     year: "numeric",
   }).format(date);
+}
+
+export function formatTime(iso: string | Date): string {
+  const date = typeof iso === "string" ? new Date(iso) : iso;
+  return new Intl.DateTimeFormat("en-IN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  }).format(date);
+}
+
+export function currentTimeValue(): string {
+  const now = new Date();
+  return `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 }
 
 export function newInvoiceNumber(): string {
@@ -101,14 +119,37 @@ export async function fetchEstimates(): Promise<SavedEstimate[]> {
     gst_amount: Number(row.gst_amount),
     total: Number(row.total),
     gst_rate: Number(row.gst_rate),
+    discount_value: Number(row.discount_value ?? 0),
+    discount_amount: Number(row.discount_amount ?? 0),
     items: (row.items as unknown as EstimateItem[]) ?? [],
   })) as SavedEstimate[];
 }
 
-export function computeTotals(items: EstimateItem[], gstEnabled: boolean, gstRate: number) {
+export type DiscountType = "none" | "percent" | "amount";
+
+export function computeTotals(
+  items: EstimateItem[],
+  gstEnabled: boolean,
+  gstRate: number,
+  discountType: DiscountType = "none",
+  discountValue = 0,
+) {
   const subtotal = items.reduce((sum, item) => sum + item.quantity * item.price, 0);
-  const gstAmount = gstEnabled ? (subtotal * gstRate) / 100 : 0;
+  let discountAmount = 0;
+  if (discountType === "percent") discountAmount = (subtotal * (discountValue || 0)) / 100;
+  if (discountType === "amount") discountAmount = discountValue || 0;
+  discountAmount = Math.min(Math.max(discountAmount, 0), subtotal);
+  const taxable = subtotal - discountAmount;
+  const gstAmount = gstEnabled ? (taxable * gstRate) / 100 : 0;
   const itemCount = items.filter((item) => item.name.trim().length > 0).length;
   const totalQuantity = items.reduce((sum, item) => sum + (item.quantity || 0), 0);
-  return { subtotal, gstAmount, total: subtotal + gstAmount, itemCount, totalQuantity };
+  return {
+    subtotal,
+    discountAmount,
+    taxable,
+    gstAmount,
+    total: taxable + gstAmount,
+    itemCount,
+    totalQuantity,
+  };
 }
