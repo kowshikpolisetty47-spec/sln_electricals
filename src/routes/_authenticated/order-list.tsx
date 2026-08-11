@@ -18,7 +18,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
-import { CATEGORIES, UNITS, formatDate } from "@/lib/billing";
+import { ProductPicker } from "@/components/ProductPicker";
+import { CATEGORIES, UNITS, fetchProducts, formatDate } from "@/lib/billing";
 
 export const Route = createFileRoute("/_authenticated/order-list")({
   head: () => ({
@@ -92,6 +93,7 @@ async function fetchOrderList(): Promise<OrderRow[]> {
 function OrderList() {
   const queryClient = useQueryClient();
   const { data: rows = [] } = useQuery({ queryKey: ["order-list"], queryFn: fetchOrderList });
+  const { data: products = [] } = useQuery({ queryKey: ["products"], queryFn: fetchProducts });
   const [form, setForm] = useState<FormState>(EMPTY);
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["order-list"] });
@@ -167,13 +169,28 @@ function OrderList() {
           >
             <div className="grid gap-1.5">
               <Label htmlFor="order-name">Item name</Label>
+              <ProductPicker
+                products={products}
+                value={form.name}
+                onSelect={(product) =>
+                  setForm({
+                    ...form,
+                    name: product.name,
+                    category: product.category,
+                    unit: product.unit,
+                  })
+                }
+              />
               <Input
                 id="order-name"
                 value={form.name}
                 maxLength={120}
                 onChange={(event) => setForm({ ...form, name: event.target.value })}
-                placeholder="e.g. 1.5 sq mm Wire — Red"
+                placeholder="Or type a new item name"
               />
+              <p className="text-xs text-muted-foreground">
+                Pick from your products, or type a name that isn't in the catalogue yet.
+              </p>
             </div>
             <div className="grid gap-1.5">
               <Label>Category</Label>
