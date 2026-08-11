@@ -439,6 +439,32 @@ function CreateEstimate() {
                 className="w-24 bg-card"
               />
             </div>
+            <div className="no-print grid gap-1.5 pt-2 sm:max-w-sm">
+              <Label htmlFor="whatsapp" className="text-sm">
+                Send bill on WhatsApp
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  id="whatsapp"
+                  value={whatsappNumber}
+                  inputMode="tel"
+                  maxLength={15}
+                  onChange={(event) => setWhatsappNumber(event.target.value)}
+                  placeholder={customerPhone || "WhatsApp number"}
+                  className="bg-card"
+                />
+                <Button
+                  type="button"
+                  onClick={sendWhatsapp}
+                  className="shrink-0 bg-[#25D366] text-white hover:bg-[#1eb457]"
+                >
+                  <MessageCircle className="h-4 w-4" /> Send
+                </Button>
+              </div>
+              <p className="text-xs">
+                Leave blank to use the customer phone number. Indian numbers get +91 automatically.
+              </p>
+            </div>
           </div>
 
           <div className="rounded-xl border border-border bg-card p-5 shadow-card">
