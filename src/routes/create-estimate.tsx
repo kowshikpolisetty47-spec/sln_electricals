@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { FileDown, Plus, Printer, RotateCcw, Save, Trash2 } from "lucide-react";
+import { FileDown, MessageCircle, Plus, Printer, RotateCcw, Save, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -60,6 +60,7 @@ function CreateEstimate() {
   const [estimateTime, setEstimateTime] = useState(currentTimeValue);
   const [discountType, setDiscountType] = useState<DiscountType>("none");
   const [discountValue, setDiscountValue] = useState(0);
+  const [whatsappNumber, setWhatsappNumber] = useState("");
   const [items, setItems] = useState<EstimateItem[]>([emptyRow()]);
 
   const totals = useMemo(
@@ -85,6 +86,55 @@ function CreateEstimate() {
     setDiscountValue(0);
     setEstimateTime(currentTimeValue());
     setInvoiceNumber(newInvoiceNumber());
+    setWhatsappNumber("");
+  }
+
+  function buildWhatsappMessage() {
+    const filled = items.filter((item) => item.name.trim().length > 0);
+    const lines = [
+      "*SLN Electricals*",
+      "Electrical & Plumbing Materials",
+      "",
+      `Estimate: ${invoiceNumber}`,
+      `Date: ${formatDate(new Date())}${estimateTime ? ` · ${estimateTime}` : ""}`,
+    ];
+    if (customerName) lines.push(`Customer: ${customerName}`);
+    if (electricianName) lines.push(`Electrician/Plumber: ${electricianName}`);
+    lines.push("", "*Items*");
+    filled.forEach((item, index) => {
+      lines.push(
+        `${index + 1}. ${item.name} — ${item.quantity} ${item.unit} x ${formatINR(item.price)} = ${formatINR(item.quantity * item.price)}`,
+      );
+    });
+    lines.push("", `Grand total: ${formatINR(totals.subtotal)}`);
+    if (totals.discountAmount > 0) {
+      lines.push(
+        `Discount${discountType === "percent" ? ` @ ${discountValue}%` : ""}: -${formatINR(totals.discountAmount)}`,
+      );
+    }
+    if (gstEnabled) lines.push(`GST @ ${gstRate}%: ${formatINR(totals.gstAmount)}`);
+    lines.push(`*Final total: ${formatINR(totals.total)}*`);
+    lines.push("", "This estimate is a quotation only and is valid for 7 days.");
+    return lines.join("\n");
+  }
+
+  function sendWhatsapp() {
+    const filled = items.filter((item) => item.name.trim().length > 0);
+    if (filled.length === 0) {
+      toast.error("Add at least one item before sending.");
+      return;
+    }
+    const digits = (whatsappNumber || customerPhone).replace(/\D/g, "");
+    if (digits.length < 10) {
+      toast.error("Enter a valid WhatsApp number (10 digits, or with country code).");
+      return;
+    }
+    const withCode = digits.length === 10 ? `91${digits}` : digits;
+    window.open(
+      `https://wa.me/${withCode}?text=${encodeURIComponent(buildWhatsappMessage())}`,
+      "_blank",
+      "noopener,noreferrer",
+    );
   }
 
   const save = useMutation({
@@ -388,6 +438,32 @@ function CreateEstimate() {
                 aria-label="Discount value"
                 className="w-24 bg-card"
               />
+            </div>
+            <div className="no-print grid gap-1.5 pt-2 sm:max-w-sm">
+              <Label htmlFor="whatsapp" className="text-sm">
+                Send bill on WhatsApp
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  id="whatsapp"
+                  value={whatsappNumber}
+                  inputMode="tel"
+                  maxLength={15}
+                  onChange={(event) => setWhatsappNumber(event.target.value)}
+                  placeholder={customerPhone || "WhatsApp number"}
+                  className="bg-card"
+                />
+                <Button
+                  type="button"
+                  onClick={sendWhatsapp}
+                  className="shrink-0 bg-[#25D366] text-white hover:bg-[#1eb457]"
+                >
+                  <MessageCircle className="h-4 w-4" /> Send
+                </Button>
+              </div>
+              <p className="text-xs">
+                Leave blank to use the customer phone number. Indian numbers get +91 automatically.
+              </p>
             </div>
           </div>
 
